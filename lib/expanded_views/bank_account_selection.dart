@@ -22,7 +22,10 @@ class _BankAccountSelectionCardState extends State<BankAccountSelectionCard> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
+      height: screenHeight * 0.65,
       decoration: BoxDecoration(
         color: Colors.grey[900], // Dark background
         borderRadius: BorderRadius.circular(12),
@@ -60,79 +63,81 @@ class _BankAccountSelectionCardState extends State<BankAccountSelectionCard> {
             ),
           ),
           SizedBox(height: 20),
-          // Bank Account Options
-          Column(
-            children: widget.body.items!.map((item) {
-              bool isSelected = _selectedBank == item.title;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedBank = item.title;
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue[700] : Colors.grey[800],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      // Icon Placeholder
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white, // Placeholder color
-                          borderRadius: BorderRadius.circular(8),
+          // Bank Account Options wrapped in Expanded
+          Expanded(
+            child: ListView(
+              children: widget.body.items!.map((item) {
+                bool isSelected = _selectedBank == item.title;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedBank = item.title;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.blue[700] : Colors.grey[800],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        // Icon Placeholder
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white, // Placeholder color
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.account_balance,
+                            color: Colors.blue,
+                          ),
                         ),
-                        child: Icon(
-                          Icons.account_balance,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      // Bank Details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.title ?? '',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Figtree-Regular',
+                        SizedBox(width: 16),
+                        // Bank Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.title ?? '',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Figtree-Regular',
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Account Number: ${_formatAccountNumber(item.subtitle)}',
-                              style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 14,
-                                fontFamily: 'Figtree-Regular',
+                              SizedBox(height: 4),
+                              Text(
+                                'Account Number: ${_formatAccountNumber(item.subtitle)}',
+                                style: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontSize: 14,
+                                  fontFamily: 'Figtree-Regular',
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      // Selection Indicator
-                      if (isSelected)
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                        ),
-                    ],
+                        // Selection Indicator
+                        if (isSelected)
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
+          // Footer and Button at the bottom
           SizedBox(height: 20),
-          // Footer Information
           Text(
             widget.body.footer!,
             style: TextStyle(
@@ -142,14 +147,13 @@ class _BankAccountSelectionCardState extends State<BankAccountSelectionCard> {
             ),
           ),
           SizedBox(height: 20),
-          // CTA Button
           ElevatedButton(
             onPressed: _selectedBank != null
                 ? () {
               widget.onCtaPressed({'bankAccount': _selectedBank!});
             }
                 : null,
-            child: Text(widget.ctaText), // Updated to use widget.ctaText
+            child: Text(widget.ctaText),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue, // CTA button color
               minimumSize: Size(double.infinity, 50),

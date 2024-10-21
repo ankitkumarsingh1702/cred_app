@@ -21,7 +21,10 @@ class _EmiSelectionCardState extends State<EmiSelectionCard> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
+      height: screenHeight * 0.75,
       decoration: BoxDecoration(
         color: Colors.grey[900], // Dark background
         borderRadius: BorderRadius.circular(12),
@@ -60,74 +63,105 @@ class _EmiSelectionCardState extends State<EmiSelectionCard> {
           ),
           SizedBox(height: 20),
           // EMI Options (Horizontally Scrollable)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: widget.body.items!.map((item) {
-                bool isSelected = _selectedEmi == item.emi;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedEmi = item.emi;
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8),
-                    padding: EdgeInsets.all(16),
-                    width: 150, // Card width for horizontal scroll
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue[700] : Colors.grey[800],
-                      borderRadius: BorderRadius.circular(12),
-                      border: item.tag == 'recommended'
-                          ? Border.all(color: Colors.green, width: 2)
-                          : null,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title ?? '',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Figtree-Regular',
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          item.subtitle,
-                          style: TextStyle(
-                            color: Colors.grey[400],
-                            fontSize: 14,
-                            fontFamily: 'Figtree-Regular',
-                          ),
-                        ),
-                        if (item.tag != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                item.tag!,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontFamily: 'Figtree-Regular',
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.body.items!.map((item) {
+                  bool isSelected = _selectedEmi == item.emi;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedEmi = item.emi;
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 8),
+                      child: Stack(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
+                            width: 150,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              color: isSelected ? Colors.blue[700] : Colors.grey[800],
+                              borderRadius: BorderRadius.circular(12),
+                              border: item.tag == 'recommended'
+                                  ? Border.all(color: Colors.green, width: 2)
+                                  : null,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Adjusted padding to accommodate the icon
+                                Text(
+                                  item.title ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Figtree-Regular',
+                                  ),
                                 ),
-                              ),
+                                SizedBox(height: 8),
+                                Text(
+                                  item.subtitle,
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontSize: 14,
+                                    fontFamily: 'Figtree-Regular',
+                                  ),
+                                ),
+                                if (item.tag != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        item.tag!,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontFamily: 'Figtree-Regular',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
-                      ],
+                          // Circle icon at the top-left corner
+                          Positioned(
+                            top: 8,
+                            left: 8,
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: isSelected
+                                  ? Icon(
+                                Icons.check,
+                                color: Colors.blue[700],
+                                size: 16,
+                              )
+                                  : Container(),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
           SizedBox(height: 20),
@@ -151,7 +185,7 @@ class _EmiSelectionCardState extends State<EmiSelectionCard> {
               });
             }
                 : null,
-            child: Text(widget.ctaText), // Updated to use widget.ctaText
+            child: Text(widget.ctaText),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue, // CTA button color
               minimumSize: Size(double.infinity, 50),
@@ -172,14 +206,16 @@ class _EmiSelectionCardState extends State<EmiSelectionCard> {
 
   String _getDuration(String emi) {
     final matchedItem = widget.body.items!.firstWhere(
-            (item) => item.emi == emi,
-        orElse: () => Item(
-            emi: emi,
-            duration: '',
-            title: '',
-            subtitle: '',
-            tag: null,
-            icon: null));
+          (item) => item.emi == emi,
+      orElse: () => Item(
+        emi: emi,
+        duration: '',
+        title: '',
+        subtitle: '',
+        tag: null,
+        icon: null,
+      ),
+    );
     return matchedItem.duration ?? '';
   }
 }

@@ -27,13 +27,15 @@ class StackScreen extends StatelessWidget {
         body: BlocBuilder<StackBloc, StackState>(
           builder: (context, state) {
             if (state is StackLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (state is StackLoaded) {
               return ListView.builder(
                 padding: EdgeInsets.only(top: 60, bottom: 20),
                 itemCount: state.items.length,
                 itemBuilder: (context, index) {
                   final isExpanded = state.expandedIndex == index;
+                  final hasUserInput = state.userInputs[index] != null &&
+                      state.userInputs[index]!.isNotEmpty;
                   return Column(
                     children: [
                       if (isExpanded)
@@ -55,7 +57,7 @@ class StackScreen extends StatelessWidget {
                               // Last step completed
                               // Perform final action
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text('Process Completed!'),
                                 ),
                               );
@@ -65,7 +67,8 @@ class StackScreen extends StatelessWidget {
                             context.read<StackBloc>().add(BackPressed());
                           },
                         )
-                      else
+                      // Only show the collapsed view if it has user input
+                      else if (hasUserInput)
                         CollapsedView(
                           item: state.items[index],
                           userInput: state.userInputs[index],
@@ -97,3 +100,4 @@ class StackScreen extends StatelessWidget {
     );
   }
 }
+

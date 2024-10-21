@@ -25,7 +25,7 @@ class StackBloc extends Bloc<StackEvent, StackState> {
     try {
       final items = await repository.getStackItems();
       if (items.length < 2 || items.length > 4) {
-        emit(StackError('Number of items must be between 2 and 4.'));
+        emit(const StackError('Number of items must be between 2 and 4.'));
       } else {
         // Initially, expand the first card (index 0).
         emit(StackLoaded(items: items, expandedIndex: 0, userInputs: {}));
@@ -36,13 +36,25 @@ class StackBloc extends Bloc<StackEvent, StackState> {
   }
 
   /// Handles the [ExpandStackItem] event.
+  /// Handles the [ExpandStackItem] event and removes data for indices greater than the current index.
   void _onExpandStackItem(
       ExpandStackItem event, Emitter<StackState> emit) {
     final currentState = state;
     if (currentState is StackLoaded) {
-      emit(currentState.copyWith(expandedIndex: event.index));
+      // Create a mutable copy of userInputs.
+      final updatedUserInputs = Map<int, Map<String, dynamic>>.from(currentState.userInputs);
+
+      // Remove user input data for all indices greater than the current index.
+      updatedUserInputs.removeWhere((index, _) => index > event.index);
+
+      // Emit the new state with the expanded index and updated user inputs.
+      emit(currentState.copyWith(
+        expandedIndex: event.index,
+        userInputs: updatedUserInputs,
+      ));
     }
   }
+
 
   /// Handles the [CollapseStackItem] event.
   void _onCollapseStackItem(
@@ -57,16 +69,21 @@ class StackBloc extends Bloc<StackEvent, StackState> {
   }
 
   /// Handles the [BackPressed] event to navigate to the previous card.
+  /// Handles the [BackPressed] event to navigate to the previous card and clear the current input.
   void _onBackPressed(BackPressed event, Emitter<StackState> emit) {
     final currentState = state;
     if (currentState is StackLoaded) {
-      if (currentState.expandedIndex != null &&
-          currentState.expandedIndex! > 0) {
-        // Move to the previous card.
+      if (currentState.expandedIndex != null && currentState.expandedIndex! > 0) {
+        final updatedUserInputs =
+        Map<int, Map<String, dynamic>>.from(currentState.userInputs);
+
+        updatedUserInputs.remove(currentState.expandedIndex);
+
         emit(currentState.copyWith(
-            expandedIndex: currentState.expandedIndex! - 1));
+          expandedIndex: currentState.expandedIndex! - 1,
+          userInputs: updatedUserInputs,
+        ));
       }
-      // If expandedIndex is 0 or null, you might choose to handle exit or other logic.
     }
   }
 

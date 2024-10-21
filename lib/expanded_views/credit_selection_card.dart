@@ -64,11 +64,14 @@ class _CreditSelectionCardState extends State<CreditSelectionCard> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Container(
+      height: screenHeight * 0.85,
       decoration: BoxDecoration(
-        color: Color(0xFF1C1C1C),
+        color: const Color(0xFF1C1C1C),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black54,
             blurRadius: 8,
@@ -76,78 +79,135 @@ class _CreditSelectionCardState extends State<CreditSelectionCard> {
           ),
         ],
       ),
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Text(
             widget.body.title!,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-          SizedBox(height: 4),
-          Text(widget.body.subtitle!, style: TextStyle(fontSize: 14, color: Colors.grey[400])),
-          SizedBox(height: 20),
-          Center(
-            child: GestureDetector(
-              onPanUpdate: (details) {
-                RenderBox box = context.findRenderObject() as RenderBox;
-                Offset localPosition = box.globalToLocal(details.globalPosition);
-                _handleTouch(localPosition, box.size);
-              },
-              child: CustomPaint(
-                size: Size((_sliderRadius + _pointerSize) * 2, (_sliderRadius + _pointerSize) * 2),
-                painter: _CircularSliderPainter(
-                  fixedAngle: _fixedAngle,
-                  currentAngle: _currentAngle,
-                  sliderRadius: _sliderRadius,
-                  pointerSize: _pointerSize,
+          const SizedBox(height: 4),
+          Text(
+            widget.body.subtitle!,
+            style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+          ),
+          const SizedBox(height: 20),
+          // Slider Area
+          Expanded(
+            child: Center(
+              child: Container(
+                height: screenHeight*0.45,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Container(
-                  width: (_sliderRadius + _pointerSize) * 2,
-                  height: (_sliderRadius + _pointerSize) * 2,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      _buildMovablePointer(),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                child: GestureDetector(
+                  onPanUpdate: (details) {
+                    RenderBox box = context.findRenderObject() as RenderBox;
+                    Offset localPosition = box.globalToLocal(details.globalPosition);
+                    _handleTouch(localPosition, box.size);
+                  },
+                  child: CustomPaint(
+                    size: Size(
+                      (_sliderRadius + _pointerSize) * 2,
+                      (_sliderRadius + _pointerSize) * 2,
+                    ),
+                    painter: _CircularSliderPainter(
+                      fixedAngle: _fixedAngle,
+                      currentAngle: _currentAngle,
+                      sliderRadius: _sliderRadius,
+                      pointerSize: _pointerSize,
+                    ),
+                    child: SizedBox(
+                      width: (_sliderRadius + _pointerSize) * 2,
+                      height: (_sliderRadius + _pointerSize) * 2,
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Text(
-                            '₹${_currentValue.toInt()}',
-                            style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                          _buildMovablePointer(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.body.card!.header,
+                                style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                              ),
+                              Text(
+                                '₹${_currentValue.toInt()}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                widget.body.card!.description,
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 5),
-                          Text(
-                            widget.body.card!.description,
-                            style: TextStyle(color: Color(0xFF8E8E93), fontSize: 14),
+                          // Position the footer text at the bottom of the circular slider
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                widget.body.footer!,
+                                style: const TextStyle(
+                                  color: Color(0xFF8E8E93),
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 10),
-                          Text(
-                            widget.body.footer!,
-                            style: TextStyle(color: Color(0xFF8E8E93), fontSize: 12),
-                            textAlign: TextAlign.center,
-                          ),
+                          SizedBox(height: 16,)
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              widget.onCtaPressed({'creditAmount': _currentValue});
-            },
-            child: Text(widget.ctaText),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              minimumSize: Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+          // Footer and Button
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  widget.onCtaPressed({'creditAmount': _currentValue});
+                },
+                child: Text(widget.ctaText),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -191,21 +251,24 @@ class _CircularSliderPainter extends CustomPainter {
     final center = Offset(sliderRadius + pointerSize, sliderRadius + pointerSize);
 
     final trackPaint = Paint()
-      ..color = Color(0xFFE5E5E5)
+      ..color = const Color(0xFFE5E5E5)
       ..strokeWidth = 10
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final rangePaint = Paint()
-      ..color = Color(0xFFFFAD94)
+      ..color = const Color(0xFFFFAD94)
       ..strokeWidth = 10
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
+    // Draw the background track
     canvas.drawCircle(center, sliderRadius, trackPaint);
 
+    // Calculate the sweep angle
     double sweepAngle = (currentAngle - fixedAngle) * pi / 180.0;
 
+    // Draw the active range arc
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: sliderRadius),
       -pi / 2,

@@ -67,6 +67,7 @@ class CollapsedView extends StatelessWidget {
     return GestureDetector(
       onTap: onExpand,
       child: Container(
+        height: 90,
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
