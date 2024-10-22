@@ -71,12 +71,20 @@ class CollapsedView extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[800],
+          gradient: LinearGradient(
+            colors: [
+              Colors.grey.withOpacity(0.5), // Half transparent color
+              // Colors.grey[800]!,             // Solid color
+            Colors.transparent
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black54,
-              blurRadius: 4,
+              blurRadius: 40,
               offset: Offset(0, 2),
             ),
           ],

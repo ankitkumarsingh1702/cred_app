@@ -26,9 +26,17 @@ class _EmiSelectionCardState extends State<EmiSelectionCard> {
     return Container(
       height: screenHeight * 0.75,
       decoration: BoxDecoration(
-        color: Colors.grey[900], // Dark background
+        gradient: LinearGradient(
+          colors: [
+            Colors.grey.withOpacity(0.5),
+            Colors.transparent
+            // Colors.grey[900]!,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black54,
             blurRadius: 8,

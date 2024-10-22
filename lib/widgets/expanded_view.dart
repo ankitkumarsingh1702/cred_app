@@ -11,7 +11,7 @@ class ExpandedViewWidget extends StatelessWidget {
   final Function(Map<String, dynamic> data) onCtaPressed;
   final VoidCallback onBack;
 
-  ExpandedViewWidget({
+  const ExpandedViewWidget({super.key,
     required this.item,
     required this.index,
     required this.onCtaPressed,
@@ -40,7 +40,7 @@ class ExpandedViewWidget extends StatelessWidget {
           onCtaPressed: onCtaPressed,
         );
       default:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
 }

@@ -27,7 +27,15 @@ class _BankAccountSelectionCardState extends State<BankAccountSelectionCard> {
     return Container(
       height: screenHeight * 0.65,
       decoration: BoxDecoration(
-        color: Colors.grey[900], // Dark background
+        gradient: LinearGradient(
+          colors: [
+            Colors.grey.withOpacity(0.5),
+            // Colors.grey[900]!,
+          Colors.transparent
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -180,4 +188,3 @@ class _BankAccountSelectionCardState extends State<BankAccountSelectionCard> {
     return matches.map((m) => m.group(0)).join(' ');
   }
 }
-//check

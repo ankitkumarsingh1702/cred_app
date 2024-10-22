@@ -69,7 +69,15 @@ class _CreditSelectionCardState extends State<CreditSelectionCard> {
     return Container(
       height: screenHeight * 0.85,
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1C),
+        gradient: LinearGradient(
+          colors: [
+            Colors.grey.withOpacity(0.5),
+            Colors.transparent
+            // const Color(0xFF1C1C1C),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
@@ -103,7 +111,7 @@ class _CreditSelectionCardState extends State<CreditSelectionCard> {
           Expanded(
             child: Center(
               child: Container(
-                height: screenHeight*0.45,
+                height: screenHeight * 0.45,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
